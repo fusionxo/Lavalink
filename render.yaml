@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: lavalink
+    env: java
+    plan: free
+    envVars:
+      - key: JAVA_VERSION
+        value: 17
+      - key: LAVALINK_PASSWORD
+        value: youshallnotpass
+    buildCommand: ./gradlew build
+    startCommand: java -Xmx350m -jar Lavalink.jar
