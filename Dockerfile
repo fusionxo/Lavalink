@@ -3,20 +3,13 @@ FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
-# Copy Gradle files first (better caching)
-COPY build.gradle.kts settings.gradle.kts gradlew gradlew.bat ./
-COPY gradle ./gradle
-
-# Give gradlew execute permission
-RUN chmod +x ./gradlew
-
-# Download dependencies
-RUN ./gradlew --no-daemon dependencies
-
-# Copy the rest of the source
+# Copy everything (source + gradle files)
 COPY . .
 
-# Build Lavalink JAR without running tests
+# Give gradlew execute permissions
+RUN chmod +x ./gradlew
+
+# Build Lavalink JAR without tests
 RUN ./gradlew build -x test --no-daemon
 
 # -------- Stage 2: Run Lavalink --------
@@ -24,7 +17,7 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-# Copy the built JAR from the build stage
+# Copy the built JAR from build stage
 COPY --from=build /app/LavalinkServer/build/libs/Lavalink*.jar Lavalink.jar
 COPY application.yml .
 
